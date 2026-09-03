@@ -1,10 +1,15 @@
-import type { Request, Response } from "express";
-import { validateCardNumber } from "../services/validateCardService";
+import type { Request, Response, NextFunction } from "express";
+import { validateCardNumber } from "../services/validateCardNumber";
 
-export const validateCard = (req: Request, res: Response) => {
-  const { cardNumber } = req.body;
-
-  const result = validateCardNumber(cardNumber);
-
-  res.json(result);
+export const validateCardController = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const result = validateCardNumber(req.body.cardNumber);
+    return res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
 };
