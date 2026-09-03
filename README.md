@@ -14,7 +14,11 @@ Card Number Validator is a small Express and TypeScript API that checks whether 
 
 ## Getting Started
 
-### Prerequisites
+### Quick Use
+Make a POST request to https://card-number-validator-neon.vercel.app/api/cardNumber/validate
+See the API documentation below for more info
+
+### Installation Prerequisites
 
 - Node.js 18 or newer
 - npm
@@ -47,7 +51,7 @@ npm start
 ### Request
 
 ```http
-POST /api/cardNumber/validate
+POST https://card-number-validator-neon.vercel.app/api/cardNumber/validate
 Content-Type: application/json
 ```
 
