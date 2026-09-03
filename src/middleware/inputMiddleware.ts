@@ -10,6 +10,15 @@ export function inputMiddleware(
 ) {
   const { cardNumber } = req.body;
 
+  if (typeof cardNumber === "number") {
+    if (cardNumber === 0 || Number.isNaN(cardNumber)) {
+      return next(new ServerError("cardNumber cannot be 0 or NaN", 400));
+    }
+
+    req.body.cardNumber = cardNumber.toString();
+    return next();
+  }
+
   if (cardNumber === undefined) {
     return next(new ServerError("cardNumber is required", 400));
   }

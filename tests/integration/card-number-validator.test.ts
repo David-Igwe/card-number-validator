@@ -22,6 +22,35 @@ describe("Card number validation API", () => {
       expect(response.body).toEqual({ isValid: false });
     });
 
+    it("should cast a numeric cardNumber before validating", async () => {
+      const response = await request(app)
+        .post("/api/cardNumber/validate")
+        .send({ cardNumber: 4532015112830366 });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({ isValid: true });
+    });
+
+    it("should reject a numeric cardNumber of zero", async () => {
+      const response = await request(app)
+        .post("/api/cardNumber/validate")
+        .send({ cardNumber: 0 });
+
+      expect(response.status).toBe(400);
+      expect(response.body).toEqual({
+        error: "cardNumber cannot be 0 or NaN",
+      });
+    });
+
+    it("should reject null, which is how JSON represents NaN", async () => {
+      const response = await request(app)
+        .post("/api/cardNumber/validate")
+        .send({ cardNumber: null });
+
+      expect(response.status).toBe(400);
+      expect(response.body).toEqual({ error: "cardNumber must be a string" });
+    });
+
     it("should normalize separators before validating", async () => {
       const response = await request(app)
         .post("/api/cardNumber/validate")

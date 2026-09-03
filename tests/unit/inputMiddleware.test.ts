@@ -26,7 +26,7 @@ describe("inputMiddleware", () => {
   it("should reject a non-string cardNumber", () => {
     const next = vi.fn();
 
-    inputMiddleware(createRequest(4111111111111111), {} as never, next);
+    inputMiddleware(createRequest(true), {} as never, next);
 
     expect(next).toHaveBeenCalledWith(
       expect.objectContaining<Partial<ServerError>>({
@@ -35,6 +35,32 @@ describe("inputMiddleware", () => {
       }),
     );
   });
+
+  it("should cast a valid numeric cardNumber to a string", () => {
+    const request = createRequest(4111111111111111);
+    const next = vi.fn();
+
+    inputMiddleware(request, {} as never, next);
+
+    expect(request.body.cardNumber).toBe("4111111111111111");
+    expect(next).toHaveBeenCalledWith();
+  });
+
+  it.each([0, NaN])(
+    "should reject cardNumber with value of zero or Nan",
+    (cardNumber) => {
+      const next = vi.fn();
+
+      inputMiddleware(createRequest(cardNumber), {} as never, next);
+
+      expect(next).toHaveBeenCalledWith(
+        expect.objectContaining<Partial<ServerError>>({
+          message: "cardNumber cannot be 0 or NaN",
+          statusCode: 400,
+        }),
+      );
+    },
+  );
 
   it("should normalize spaces, dashes, and slashes", () => {
     const request = createRequest("  4111-1111/1111 1111 ");
